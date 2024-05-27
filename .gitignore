@@ -1,1 +1,6 @@
 .keys
+!.keys/place-your-keys-here
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+ansible/inventory

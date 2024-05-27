@@ -1,0 +1,6 @@
+[manager]
+${manager}
+[workers]
+%{ for worker in workers ~}
+${worker}
+%{ endfor ~}
