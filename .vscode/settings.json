@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "*-play.yml":"ansible"
-    }
+    },
+    "ansible.python.interpreterPath": "/opt/homebrew/bin/python3"
 }

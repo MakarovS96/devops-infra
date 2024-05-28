@@ -1,0 +1,37 @@
+---
+- name: Configure master node and init kluster
+  hosts: manager
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Initialize the cluster
+      ansible.builtin.shell:
+        cmd: kubeadm init --pod-network-cidr=10.100.0.0/16 >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: Create .kube directory
+      become: true
+      become_user: sennin
+      ansible.builtin.file:
+        path: $HOME/.kube
+        state: directory
+        mode: "0755"
+
+    - name: Copy admin.conf to user's kube config
+      ansible.builtin.copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/sennin/.kube/config
+        remote_src: true
+        owner: sennin
+        mode: "0755"
+
+    - name: Install Pod network
+      become: true
+      become_user: sennin
+      ansible.builtin.shell:
+        cmd: 'kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml >> pod_network_setup.txt'
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
