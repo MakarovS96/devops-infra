@@ -74,17 +74,29 @@
         path: '/etc/containerd/config.toml'
         state: absent
 
+    - name: Create default containerd config
+      ansible.builtin.shell:
+        cmd: 'containerd config default > /etc/containerd/config.toml'
+        creates: '/etc/containerd/config.toml'
+
+
+    - name: Enabe systemd cgrops
+      ansible.builtin.replace:
+        path: '/etc/containerd/config.toml'
+        regexp: 'SystemdCgroup = false'
+        replace: 'SystemdCgroup = true'
+
     - name: Start containerd
       ansible.builtin.service:
         name: containerd
         state: restarted
         enabled: true
 
-    - name: Start docker
+    - name: Stop docker
       ansible.builtin.service:
         name: docker
-        state: restarted
-        enabled: true
+        state: stopped
+        enabled: false
 
 
 - name: Install kubectl to manager

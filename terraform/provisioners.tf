@@ -42,7 +42,7 @@ resource "null_resource" "run_master_node_config" {
 }
 
 resource "null_resource" "run_workers_node_config" {
-    depends_on = [ null_resource.run_k8s_config ]
+    depends_on = [ null_resource.run_master_node_config ]
 
     provisioner "local-exec" {
         command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/conf-k8s-workers-play.yml"
