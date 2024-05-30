@@ -27,11 +27,19 @@
         owner: sennin
         mode: "0600"
 
+    - name: Copy Pod network configuration
+      become: true
+      become_user: sennin
+      ansible.builtin.copy:
+        src: '../ansible/files/calico.yml'
+        dest: '$HOME/calico.yml'
+        mode: '0655'
+        owner: 'sennin'
+
     - name: Install Pod network
       become: true
       become_user: sennin
       ansible.builtin.shell:
-        cmd: 'kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml >> pod_network_setup.txt'
-      args:
+        cmd: 'kubectl apply -f $HOME/calico.yml >> pod_network_setup.txt'
         chdir: $HOME
         creates: pod_network_setup.txt
