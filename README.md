@@ -14,7 +14,7 @@ Infrastructure deployment configuration for progect
      - Actions: rw
      - Administrate: rw
 
-2. Copy **inputvariables.tfvars.json.default** into **inputvariables.tfvars.json**
+2. Copy **terraform/inputvariables.tfvars.json.default** into **terraform/inputvariables.tfvars.json**
     And set your configuration
 
 3. Install ansible role `ansible-galaxy role install MonolithProjects.github_actions_runner`
