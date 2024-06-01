@@ -1,11 +1,10 @@
 {
-    "folder":"your-folder-id",
-
-    "cloud":"your-cloud-id",
-
-    "zone":"zone-name",
-
-    "yandex_token_file" : "../.keys/token",
+    "yandex_data": {
+        "cloud" :"your-folder-id",
+        "folder" :"your-cloud-id",
+        "zone" :"zone-name",
+        "token" :"../.keys/token"
+      },
 
     "ssh_user": {
         "name": "your-username",

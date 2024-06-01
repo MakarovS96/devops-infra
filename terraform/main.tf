@@ -1,8 +1,8 @@
 provider "yandex" {
-  token                    = file(var.yandex_token_file)
-  cloud_id                 = var.cloud
-  folder_id                = var.folder
-  zone                     = var.zone
+  token                    = file(var.yandex_data.token)
+  cloud_id                 = var.yandex_data.cloud
+  folder_id                = var.yandex_data.folder
+  zone                     = var.yandex_data.zone
 }
 
 #Create network

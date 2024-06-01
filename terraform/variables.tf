@@ -1,21 +1,12 @@
-variable "folder" {
-  type = string
-  description = "YC folder id"
-}
 
-variable "cloud" {
-  type = string
-  description = "YC cloud id"
-}
-
-variable "zone" {
-  type = string
-  description = "YC zone name"
-}
-
-variable "yandex_token_file" {
-  type = string
-  description = "path to file with your yandex cloud token"
+variable "yandex_data" {
+  description = "Yandex provider data"
+  type = object({
+    cloud = string
+    folder = string
+    zone = string
+    token = string
+  })
 }
 
 variable "ssh_user" {
