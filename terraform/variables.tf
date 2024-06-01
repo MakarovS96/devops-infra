@@ -41,3 +41,9 @@ variable "instances_count" {
   description = "Number of instances to up"
   default = 2
 }
+
+variable "github_token" {
+  type = string
+  description = "path to file with github token"
+  default = "../.keys/github-token"
+}

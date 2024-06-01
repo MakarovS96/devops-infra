@@ -1,15 +1,16 @@
 resource "local_file" "create_inventory" {
-    depends_on = [ yandex_compute_instance.vm ]
+    depends_on = [ yandex_compute_instance.vm, yandex_compute_instance.srv ]
 
     filename = "../ansible/inventory"
 
     content = templatefile("files/inventory.tmpl", {
         manager = yandex_compute_instance.vm[0].network_interface[0].nat_ip_address
         workers = [for worker in slice(yandex_compute_instance.vm, 1, var.instances_count): worker.network_interface[0].nat_ip_address]
+        srv = yandex_compute_instance.srv.network_interface[0].nat_ip_address
     })
 }
 
-resource "null_resource" "wait_for_instances" {
+resource "null_resource" "wait_for_cluster_instances" {
     depends_on = [ yandex_compute_instance.vm, local_file.create_inventory]
     count = var.instances_count
 
@@ -25,11 +26,46 @@ resource "null_resource" "wait_for_instances" {
     }
 }
 
-resource "null_resource" "run_k8s_config" {
-    depends_on = [ null_resource.wait_for_instances ]
+resource "null_resource" "wait_for_srv_instance" {
+    depends_on = [ yandex_compute_instance.srv, local_file.create_inventory]
+
+    connection {
+        type = "ssh"
+        host = yandex_compute_instance.srv.network_interface[0].nat_ip_address
+        user = var.ssh_user.name
+        private_key = file(var.ssh_user.private_key)
+    }
+
+    provisioner "remote-exec" {
+      inline = [ "echo Works!" ]
+    }
+}
+
+resource "null_resource" "run_preconf" {
+    depends_on = [ null_resource.wait_for_cluster_instances, null_resource.wait_for_srv_instance ]
 
     provisioner "local-exec" {
-        command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/preconf-play.yml"
+        command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/preconf-all-play.yml"
+    }
+}
+
+resource "null_resource" "run_srv_config" {
+    depends_on = [ null_resource.run_preconf ]
+
+    provisioner "local-exec" {
+        environment = {
+          USER = var.ssh_user.name
+          PERSONAL_ACCESS_TOKEN = file(var.github_token)
+        }
+        command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/preconf-srv-play.yml"
+    }
+}
+
+resource "null_resource" "run_k8s_config" {
+    depends_on = [ null_resource.run_preconf ]
+
+    provisioner "local-exec" {
+        command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/preconf-cluster-play.yml"
     }
 }
 

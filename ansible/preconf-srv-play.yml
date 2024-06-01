@@ -1,0 +1,33 @@
+---
+- name: Setup srv runner
+  hosts: srv
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Set user for docker
+      ansible.builtin.user:
+        name: sennin
+        append: true
+        groups: docker
+
+    - name: Set mirrors to docker
+      ansible.builtin.copy:
+        src: '../ansible/files/daemon.json'
+        dest: '/etc/docker/daemon.json'
+        mode: '0660'
+
+    - name: Restart docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+        enabled: true
+
+
+- name: Install GitHub Actions Runner
+  hosts: srv
+  become: true
+  vars:
+    github_account: MakarovS96
+    github_repo: devops-sf-app
+  roles:
+    - role: monolithprojects.github_actions_runner

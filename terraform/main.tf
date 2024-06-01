@@ -45,8 +45,37 @@ resource "yandex_compute_instance" "vm" {
     nat = true
   }
 
-  scheduling_policy {
-    preemptible = true
+  metadata = {
+    ssh_keys="${var.ssh_user.name}:${file(var.ssh_user.pub_key)}"
+    user-data=local.user_config
+  }
+}
+
+# Create srv instance
+
+resource "yandex_compute_instance" "srv" {
+
+  name = "srv"
+  hostname = "srv"
+
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.id
+      type = "network-ssd"
+      size = 18
+    }
+  }
+
+  allow_stopping_for_update = true
+
+  resources {
+    cores = 2
+    memory = 2
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.sfnetsub.id
+    nat = true
   }
 
   metadata = {

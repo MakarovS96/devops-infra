@@ -1,3 +1,4 @@
+srv ansible_host=${srv}
 manager ansible_host=${manager}
 [workers]
 %{ for worker in workers ~}
