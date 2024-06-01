@@ -27,7 +27,7 @@
   hosts: srv
   become: true
   vars:
-    github_account: MakarovS96
-    github_repo: devops-sf-app
+    github_account: "{{ lookup('env', 'GITHUB_ACCOUNT') }}"
+    github_repo: "{{ lookup('env', 'GITHUB_REPO') }}"
   roles:
     - role: monolithprojects.github_actions_runner

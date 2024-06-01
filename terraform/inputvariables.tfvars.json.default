@@ -1,0 +1,23 @@
+{
+    "folder":"your-folder-id",
+
+    "cloud":"your-cloud-id",
+
+    "zone":"zone-name",
+
+    "yandex_token_file" : "../.keys/token",
+
+    "ssh_user": {
+        "name": "your-username",
+        "private_key": "../.keys/sshkey",
+        "pub_key": "../.keys/sshkey.pub"
+    },
+
+    "instances_count": 2,
+
+    "github_data": {
+        "token": "../.keys/github-token",
+        "repo": "repo-name",
+        "account": "account-name"
+    }
+}

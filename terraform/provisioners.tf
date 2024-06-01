@@ -55,7 +55,9 @@ resource "null_resource" "run_srv_config" {
     provisioner "local-exec" {
         environment = {
           USER = var.ssh_user.name
-          PERSONAL_ACCESS_TOKEN = file(var.github_token)
+          PERSONAL_ACCESS_TOKEN = file(var.github_data.token)
+          GITHUB_REPO = var.github_data.repo
+          GITHUB_ACCOUNT = var.github_data.account
         }
         command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/preconf-srv-play.yml"
     }

@@ -1,10 +1,9 @@
 .keys/*
 !.keys/place-your-keys-here
-terraform/.terraform
-terraform/.terraform.lock.hcl
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
+terraform/.terraform*
+terraform/terraform.tfstate*
 ansible/inventory
 docker-images/*
 !docker-images/readme.md
 **/.DS_Store
+terraform/inputvariables.tfvars.json
