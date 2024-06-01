@@ -50,8 +50,8 @@
           - kubeadm
       register: result
       until: result is not failed
-      retries: 5
-      delay: 5
+      retries: 10
+      delay: 10
 
     - name: Delete containerd config
       ansible.builtin.file:
@@ -88,8 +88,17 @@
   become: true
   gather_facts: false
   tasks:
+    - name: Wait for /var/lib/dpkg/lock-frontend to be released
+      ansible.builtin.shell:
+        cmd: while lsof /var/lib/dpkg/lock-frontend ; do sleep 10; done;
+        creates: wait
+
     - name: Install kubectl
       ansible.builtin.apt:
         state: present
         name: kubectl
         update_cache: true
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10

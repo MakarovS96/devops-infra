@@ -82,5 +82,6 @@ resource "yandex_compute_instance" "srv" {
     ssh_keys="${var.ssh_user.name}:${file(var.ssh_user.pub_key)}"
     user-data=local.user_config
   }
+
 }
 

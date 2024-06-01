@@ -1,0 +1,10 @@
+---
+- name: Uninstall GitHub Actions Runner
+  hosts: srv
+  become: true
+  vars:
+    github_account: "{{lookup('env', 'GITHUB_ACCOUNT')}}"
+    github_repo: "{{ lookup('env', 'GITHUB_REPO') }}"
+    runner_state: "absent"
+  roles:
+    - role: monolithprojects.github_actions_runner

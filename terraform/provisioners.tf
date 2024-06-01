@@ -86,3 +86,27 @@ resource "null_resource" "run_workers_node_config" {
         command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${var.ssh_user.private_key} ../ansible/conf-k8s-workers-play.yml"
     }
 }
+
+resource "null_resource" "clear_gh_runners" {
+    depends_on = [yandex_compute_instance.srv, local_file.create_inventory]
+    triggers = {
+        user = var.ssh_user.name
+        token = file(var.github_data.token)
+        repo = var.github_data.repo
+        account = var.github_data.account
+        private_key = var.ssh_user.private_key
+    }
+
+    provisioner "local-exec" {
+        when = destroy
+        on_failure = continue
+
+        environment = {
+            USER = self.triggers.user
+            PERSONAL_ACCESS_TOKEN = self.triggers.token
+            GITHUB_REPO = self.triggers.repo
+            GITHUB_ACCOUNT = self.triggers.account
+        }
+        command = "ansible-playbook -u sennin -i ../ansible/inventory --private-key ${self.triggers.private_key} ../ansible/on-destroy-srv-play.yml"
+    }
+}
