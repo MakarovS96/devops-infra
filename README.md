@@ -9,7 +9,7 @@ Infrastructure deployment configuration for progect
 1. Copy files to your .keys folder:
    - sshkey - your private ssh key to auth on servers
    - sshkey.pub - public ssh key
-   - token - your yandex clout token
+   - token - your yandex cloud token
    - github-token - your github private token with permissions:
      - Actions: rw
      - Administrate: rw
