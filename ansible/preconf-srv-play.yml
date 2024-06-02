@@ -6,7 +6,7 @@
   tasks:
     - name: Set user for docker
       ansible.builtin.user:
-        name: sennin
+        name: '{{ ansible_user }}'
         append: true
         groups: docker
 

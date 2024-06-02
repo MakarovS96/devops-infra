@@ -1,45 +1,45 @@
 ---
 - name: Configure master node and init kluster
   hosts: manager
-  become: true
+  become: false
   gather_facts: false
   tasks:
     - name: Initialize the cluster
+      become: true
       ansible.builtin.shell:
-        cmd: kubeadm init --pod-network-cidr=10.100.0.0/16 >> cluster_initialized.txt
-      args:
+        cmd: kubeadm init --apiserver-cert-extra-sans={{ hostvars["manager"].ansible_host }} --pod-network-cidr=10.100.0.0/16 >> cluster_initialized.txt
         chdir: $HOME
         creates: cluster_initialized.txt
 
     - name: Create .kube directory
-      become: true
-      become_user: sennin
       ansible.builtin.file:
-        path: $HOME/.kube
+        path: '$HOME/.kube'
         state: directory
         mode: "0755"
 
     - name: Copy admin.conf to user's kube config
+      become: true
       ansible.builtin.copy:
-        src: /etc/kubernetes/admin.conf
-        dest: /home/sennin/.kube/config
+        src: '/etc/kubernetes/admin.conf'
+        dest: '/home/{{ ansible_user }}/.kube/config'
         remote_src: true
-        owner: sennin
+        owner: '{{ ansible_user }}'
         mode: "0600"
 
     - name: Copy Pod network configuration
-      become: true
-      become_user: sennin
       ansible.builtin.copy:
         src: '../ansible/files/calico.yml'
         dest: '$HOME/calico.yml'
         mode: '0655'
-        owner: 'sennin'
 
     - name: Install Pod network
-      become: true
-      become_user: sennin
       ansible.builtin.shell:
         cmd: 'kubectl apply -f $HOME/calico.yml >> pod_network_setup.txt'
+        chdir: $HOME
+        creates: pod_network_setup.txt
+
+    - name: Install ingress controller
+      ansible.builtin.shell:
+        cmd: 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml >> ingress.txt'
         chdir: $HOME
         creates: pod_network_setup.txt
