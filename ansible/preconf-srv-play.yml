@@ -22,6 +22,16 @@
         state: restarted
         enabled: true
 
+    - name: Download helm
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        mode: "0700"
+        dest: "$HOME/get_helm.sh"
+
+    - name: Install helm
+      ansible.builtin.shell:
+        cmd: "$HOME/get_helm.sh >> install_helm.txt"
+        creates: install_helm.txt
 
 - name: Install GitHub Actions Runner
   hosts: srv
