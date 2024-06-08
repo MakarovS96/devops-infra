@@ -37,9 +37,3 @@
         cmd: 'kubectl apply -f $HOME/calico.yml >> pod_network_setup.txt'
         chdir: $HOME
         creates: pod_network_setup.txt
-
-    - name: Install ingress controller
-      ansible.builtin.shell:
-        cmd: 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml >> ingress.txt'
-        chdir: $HOME
-        creates: pod_network_setup.txt
