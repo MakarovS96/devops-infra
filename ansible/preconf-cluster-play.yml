@@ -19,27 +19,6 @@
         replace: '#\1\2\3swap\4'
         backup: true
 
-    - name: Get k8s gpg key
-      ansible.builtin.get_url:
-        url: 'https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key'
-        dest: '~/Release.key'
-        mode: 'a+r'
-
-    - name: Dearmor k8s key
-      ansible.builtin.command:
-        cmd: 'gpg -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg --dearmor ~/Release.key'
-        creates: '/etc/apt/keyrings/kubernetes-apt-keyring.gpg'
-
-    - name: Add k8s repo to Ubuntu
-      ansible.builtin.apt_repository:
-        filename: kubernetes
-        repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /'
-
-    - name: Clear keys
-      ansible.builtin.file:
-        path: '~/Release.key'
-        state: absent
-
     - name: Install CRI and k8s tools
       ansible.builtin.apt:
         state: present
